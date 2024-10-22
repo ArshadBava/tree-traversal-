@@ -1,73 +1,101 @@
 #include <iostream>
 #include <queue>
 
-struct TreeNode {
-    int value;
-    TreeNode* left;
-    TreeNode* right;
+using namespace std;
 
-    TreeNode(int val) : value(val), left(NULL), right(NULL) {}
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int data) {
+        this->data = data;
+        left = right = NULL;
+    }
 };
 
-void inOrderTraversal(TreeNode* root) {
-    if (root == NULL) return;
-    inOrderTraversal(root->left);
-    std::cout << root->value << " ";
-    inOrderTraversal(root->right);
+// Postorder traversal (Left, Right, Root)
+void printPostorder(Node* node) {
+    if (node == NULL)
+        return;
+    printPostorder(node->left);
+    printPostorder(node->right);
+    cout << node->data << " ";
 }
 
-void preOrderTraversal(TreeNode* root) {
-    if (root == NULL) return;
-    std::cout << root->value << " ";
-    preOrderTraversal(root->left);
-    preOrderTraversal(root->right);
+// Inorder traversal (Left, Root, Right)
+void printInorder(Node* node) {
+    if (node == NULL)
+        return;
+    printInorder(node->left);
+    cout << node->data << " ";
+    printInorder(node->right);
 }
 
-void postOrderTraversal(TreeNode* root) {
-    if (root == NULL) return;
-    postOrderTraversal(root->left);
-    postOrderTraversal(root->right);
-    std::cout << root->value << " ";
-}
-
-void levelOrderTraversal(TreeNode* root) {
-    if (root == NULL) return;
-    std::queue<TreeNode*> q;
-    q.push(root);
-
-    while (!q.empty()) {
-        TreeNode* current = q.front();
-        q.pop();
-        std::cout << current->value << " ";
-
-        if (current->left != NULL) q.push(current->left);
-        if (current->right != NULL) q.push(current->right);
-    }
+// Preorder traversal (Root, Left, Right)
+void printPreorder(Node* node) {
+    if (node == NULL)
+        return;
+    cout << node->data << " ";
+    printPreorder(node->left);
+    printPreorder(node->right);
 }
 
 int main() {
-    TreeNode* root = new TreeNode(1);
-    root->left = new TreeNode(2);
-    root->right = new TreeNode(3);
-    root->left->left = new TreeNode(4);
-    root->left->right = new TreeNode(5);
+    int n;
+    cout << "Enter how many nodes you want to create: ";
+    cin >> n;
 
-    std::cout << "In-Order Traversal: ";
-    inOrderTraversal(root);
-    std::cout << std::endl;
+    int node_values[n];
 
-    std::cout << "Pre-Order Traversal: ";
-    preOrderTraversal(root);
-    std::cout << std::endl;
+    cout << "Enter the root node value: ";
+    int root_node_value;
+    cin >> root_node_value;
+    Node* root = new Node(root_node_value);
 
-    std::cout << "Post-Order Traversal: ";
-    postOrderTraversal(root);
-    std::cout << std::endl;
+    queue<Node*> nodeQueue;
+    nodeQueue.push(root);
 
-    std::cout << "Level-Order Traversal: ";
-    levelOrderTraversal(root);
-    std::cout << std::endl;
+    int valueIndex = 0;
+    while (!nodeQueue.empty() && valueIndex < n) {
+        Node* currentNode = nodeQueue.front();
+        nodeQueue.pop();
+
+        if (currentNode->data != root_node_value) {
+            cout << "Enter " << currentNode->data << " -> left node value: ";
+            cin >> node_values[valueIndex];
+            currentNode->left = new Node(node_values[valueIndex]);
+            nodeQueue.push(currentNode->left);
+            valueIndex++;
+
+            cout << "Enter " << currentNode->data << " -> right node value: ";
+            cin >> node_values[valueIndex];
+            currentNode->right = new Node(node_values[valueIndex]);
+            nodeQueue.push(currentNode->right);
+            valueIndex++;
+        } else {
+            cout << "Enter root -> left node value: ";
+            cin >> node_values[valueIndex];
+            currentNode->left = new Node(node_values[valueIndex]);
+            nodeQueue.push(currentNode->left);
+            valueIndex++;
+
+            cout << "Enter root -> right node value: ";
+            cin >> node_values[valueIndex];
+            currentNode->right = new Node(node_values[valueIndex]);
+            nodeQueue.push(currentNode->right);
+            valueIndex++;
+        }
+    }
+
+    cout << "\nPreorder traversal of binary tree is: \n";
+    printPreorder(root);
+
+    cout << "\nInorder traversal of binary tree is: \n";
+    printInorder(root);
+
+    cout << "\nPostorder traversal of binary tree is: \n";
+    printPostorder(root);
+    cout << endl;
 
     return 0;
 }
-
